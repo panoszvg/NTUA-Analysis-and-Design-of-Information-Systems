@@ -55,9 +55,9 @@ class Broker:
             )
         
         # Create exchange
-        exchange = self.channel.exchange_declare(exchange=exchange, exchange_type=exchange_type)
+        self.channel.exchange_declare(exchange=exchange, exchange_type=exchange_type)
 
-        # Add exchange to broker's exchanges
+        # Add exchange name to broker's exchanges
         self.exchanges.append(exchange)
 
     def create_queue(self, queue):
@@ -68,9 +68,9 @@ class Broker:
             )
         
         # Create queue
-        queue = self.channel.queue_declare(queue=queue)
+        self.channel.queue_declare(queue=queue)
 
-        # Add queue to broker's queues
+        # Add queue name to broker's queues
         self.queues.append(queue)
 
     def bind_queue_to_exchange(self, exchange, queue, binding_key):
