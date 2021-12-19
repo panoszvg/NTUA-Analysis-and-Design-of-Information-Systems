@@ -90,7 +90,7 @@ class Sender:
                 "Please provide a valid message of type str."
             )
         
-        # Send maessage
+        # Send message
         channel.basic_publish(
             exchange=exchange, routing_key=routing_key, body=message
         )
