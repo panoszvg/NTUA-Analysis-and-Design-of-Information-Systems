@@ -31,7 +31,7 @@ setup(
     python_requires=REQUIRES_PYTHON,
     platforms="Linux, Mac OS X, Windows",
     url=URL,
-    packages=find_packages(),
+    packages=find_packages(exclude=("examples",)),
     install_requires=REQUIRED,
     license="MIT",
     classifiers=[
