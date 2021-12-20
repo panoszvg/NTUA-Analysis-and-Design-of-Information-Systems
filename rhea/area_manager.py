@@ -2,8 +2,8 @@ import json
 import random
 import time
 
-from rhea import Broker
-from rhea import Sender
+from rhea.broker import Broker
+from rhea.sender import Sender
 
 class AreaManager:
     def __init__(self, area, hostname, port, send_interval, late_pct):
