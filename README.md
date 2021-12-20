@@ -18,4 +18,5 @@ This package is a product of a semester project whose purpose was to create a pr
 
 ## Creators
 Zevgolatakos Panos [@panoszvg](https://github.com/panoszvg)
+
 Papaioannou Konstantinos [@kon-pap](https://github.com/kon-pap)
