@@ -11,9 +11,9 @@ class Sender:
             raise ValueError(
                 "Please provide a valid sender area. [A, B, C, D]"
             )
-        if sensor_type not in ["temp", "power"]:
+        if sensor_type not in ["temp", "hum", "ups", "aqi"]:
             raise ValueError(
-                "Please provide a valid sender sensor type. [temp, power]"
+                "Please provide a valid sender sensor type. [temp, hum, ups, aqi]"
             )
         
         self.number = number
@@ -23,6 +23,9 @@ class Sender:
         self.channels = []
 
     def open_connection(self, hostname, port):
+        """
+        Open connection with the RabbitMQ server
+        """
         # Validate arguments
         if not isinstance(hostname, str):
             raise ValueError(

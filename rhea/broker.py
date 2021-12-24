@@ -15,6 +15,9 @@ class Broker:
         self.queues = []
 
     def open_connection(self, hostname, port):
+        """
+        Open connection and create a channel to communicate with the RabbitMQ server
+        """
         # Validate arguments
         if not isinstance(hostname, str):
             raise ValueError(

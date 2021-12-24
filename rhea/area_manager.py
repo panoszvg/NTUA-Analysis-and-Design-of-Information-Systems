@@ -50,9 +50,9 @@ class AreaManager:
 
     def add_sender_to_area(self, sensor_type):
         # Validate arguments
-        if sensor_type not in ["temp", "power"]:
+        if sensor_type not in ["temp", "hum", "ups", "aqi"]:
             raise ValueError(
-                "Please provide a valid sender sensor type. [temp, power]"
+                "Please provide a valid sender sensor type. [temp, hum, ups, aqi]"
             )
 
         # Create sender
