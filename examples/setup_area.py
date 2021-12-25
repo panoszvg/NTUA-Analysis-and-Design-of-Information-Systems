@@ -4,14 +4,20 @@ import time
 from rhea import AreaManager, Sender
 
 AREA = "A"
-EXCHANGES = ["temperature_sensors"]
-QUEUES = ["ontime_temperatures", "late_temperatures"]
-BINDING = ["ontime.temp", "late.temp"]
+EXCHANGES = ["all_sensors"]
+QUEUES = ["ontime_temperature", "late_temperature",
+          "ontime_humidity", "late_humidity",
+          "ontime_ups_battery", "late_ups_battery",
+          "ontime_air_quality_index", "late_air_quality_index"]
+BINDINGS = ["ontime.temp", "late.temp",
+           "ontime.hum", "late.hum",
+           "ontime.ups", "late.ups",
+           "ontime.aqi", "late.aqi"]
 HOSTNAME = "<BROKER_IP>"
 PORT = "<BROKER_PORT>"
 
-# Create an area manager - send_interval = 20s, late_pct = 1/30
-am = AreaManager(AREA, HOSTNAME, PORT, 20, 1/30)
+# Create an area manager - send_interval = 90s, late_pct = 1/30
+am = AreaManager(AREA, HOSTNAME, PORT, 90, 1/30)
 print(f"Successfully created AreaManager in area {AREA}.")
 
 # Create exchange for the area
@@ -25,16 +31,16 @@ for queue in QUEUES:
     print(f"Successfully created Exchange {queue}.")
 
 # Bind queues to exchange
-am.bind_queue_to_exchange("temperature_sensors", "ontime_temperatures", "ontime.temp")
-print("Successfully binded ontime_temperatures to temperature_sensors (ontime.temp).")
-am.bind_queue_to_exchange("temperature_sensors", "late_temperatures", "late.temp")
-print("Successfully binded late_temperatures to temperature_sensors (late.temp).")
+for queue, binding_key in zip(QUEUES, BINDINGS):
+    am.bind_queue_to_exchange("all_sensors", queue, binding_key)
+    print(f"Successfully binded {queue} to all_sensors ({binding_key}).")
 
 # Add senders to area
-for i in range(2):
-    am.add_sender_to_area("temp")
+sensor_types = ["temp", "hum", "ups", "aqi"]
+for i, sensor_type in enumerate(sensor_types):
+    am.add_sender_to_area(sensor_type)
     print(f"Successfully added sender {i} in area A")
 
 # Activate area
 print("About to activate area A.")
-am.activate_area("temperature_sensors")
+am.activate_area("all_sensors")

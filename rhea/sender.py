@@ -22,6 +22,9 @@ class Sender:
         self.connection = None
         self.channels = []
 
+    def get_type(self):
+        return self.sensor_type
+
     def open_connection(self, hostname, port):
         """
         Open connection with the RabbitMQ server

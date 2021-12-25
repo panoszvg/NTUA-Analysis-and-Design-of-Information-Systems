@@ -1,4 +1,5 @@
 import json
+import numpy as np
 import random
 import time
 
@@ -63,8 +64,6 @@ class AreaManager:
         self.senders.append(sender)
 
     def activate_area(self, exchange):
-        # TODO: Support multiple sensor types. Currently only temp messages are sent
-
         # Define async intervals not all sender send at the same time
         powers = [2**(i+1) for i in range(len(self.senders))]
         if round(self.send_interval/sum(powers)) <= 2:
@@ -79,6 +78,7 @@ class AreaManager:
         sleep_time = self.send_interval - sum(async_intervals)
         async_intervals.append(sleep_time)
 
+        # TODO: Consider whether different sensor types should go to different exchanges
         # Create channels for senders
         channels = []
         for s in self.senders:
@@ -96,12 +96,12 @@ class AreaManager:
                     time_now = time.localtime()
                     message_dict = {
                         "sender_no": s.number,
-                        "value": 20 + random.random() * 5,
+                        "value": self.create_value(s.get_type()),
                         "created_timestamp": out_of_order_time,
                         "event_timestamp": time_now
                     }
                     message = json.dumps(message_dict)
-                    s.send_message(c, exchange, "late.temp", message)
+                    s.send_message(c, exchange, f"late.{s.get_type()}", message)
                     time.sleep(async_intervals[i])
                     i = i + 1
                 out_of_order_time = time.localtime()
@@ -111,14 +111,36 @@ class AreaManager:
                     time_now = time.localtime()
                     message_dict = {
                         "sender_no": s.number,
-                        "value": 20 + random.random() * 5,
+                        "value": self.create_value(s.get_type()),
                         "created_timestamp": time_now,
                         "event_timestamp": time_now
                     }
                     message = json.dumps(message_dict)
-                    s.send_message(c, exchange, "ontime.temp", message)
+                    s.send_message(c, exchange, f"ontime.{s.get_type()}", message)
                     time.sleep(async_intervals[i])
                     i = i + 1
 
+    def terminate_area(self):
+        # Terminate senders
+        for s in self.senders:
+            s.close_connection()
+        
+        # Terminate broker
+        self.broker.close_connection()
 
-
+    def create_value(self, sensor_type):
+        if sensor_type == "temp":
+            # Get random value between 18.3 - 29.4
+            return round(np.random.normal(23.85, 5.55), 2)
+        elif sensor_type == "hum":
+            # Get random value between 0.37 - 0.62
+            return np.random.normal(49.5, 12.5) / 100
+        elif sensor_type == "ups":
+            # Get random value between 0.82 - 1.0
+            ups_batt = np.random.normal(91, 9) / 100
+            if ups_batt > 1.0:
+                ups_batt = 1.0
+            return ups_batt
+        elif sensor_type == "aqi":
+            # Get random value between 0 - 115
+            return np.random.poisson(25)
