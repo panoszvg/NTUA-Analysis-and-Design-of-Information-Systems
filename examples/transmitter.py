@@ -1,13 +1,16 @@
 import json
 import pika
 import socket
-import sys
+import sys, os
+from dotenv import load_dotenv
 
-HOSTNAME = "<BROKER_IP>"
-PORT = "<BROKER_PORT>"
+load_dotenv()
+
+HOSTNAME = os.getenv('BROKER_IP')
+PORT = int(os.getenv('BROKER_PORT'))
 
 QUEUE="ontime_temperatures"
-QUEUE_PORT = "<QUEUE_PORT>"
+QUEUE_PORT = int(os.getenv('QUEUE_PORT'))
 
 # Create connection with message layer
 connection = pika.BlockingConnection(

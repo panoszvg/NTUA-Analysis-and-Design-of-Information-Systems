@@ -1,5 +1,8 @@
 import json
 import time
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 from rhea import AreaManager, Sender
 
@@ -13,8 +16,10 @@ BINDINGS = ["ontime.temp", "late.temp",
            "ontime.hum", "late.hum",
            "ontime.ups", "late.ups",
            "ontime.aqi", "late.aqi"]
-HOSTNAME = "<BROKER_IP>"
-PORT = "<BROKER_PORT>"
+
+HOSTNAME = os.getenv('BROKER_IP')
+PORT = int(os.getenv('BROKER_PORT'))
+print(PORT)
 
 # Create an area manager - send_interval = 90s, late_pct = 1/30
 am = AreaManager(AREA, HOSTNAME, PORT, 90, 1/30)
