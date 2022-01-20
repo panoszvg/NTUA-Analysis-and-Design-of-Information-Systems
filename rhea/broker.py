@@ -14,7 +14,7 @@ class Broker:
         self.exchanges = []
         self.queues = []
 
-    def open_connection(self, hostname, port):
+    def open_connection(self, hostname, port, username, password):
         """
         Open connection and create a channel to communicate with the RabbitMQ server
         """
@@ -27,12 +27,14 @@ class Broker:
             raise ValueError(
                 "Please provide a valid port of type int. [0-65535]"
             )
-        
+
         # Open connection
+        credentials = pika.PlainCredentials(username, password)
         self.connection = pika.BlockingConnection(
             pika.ConnectionParameters(
                 host=hostname,
-                port=port
+                port=port,
+                credentials=credentials
             )
         )
 
@@ -56,7 +58,7 @@ class Broker:
             raise ValueError(
                 "Please provide a valid exchange type. [direct, fanout, headers, topic]"
             )
-        
+
         # Create exchange
         self.channel.exchange_declare(exchange=exchange, exchange_type=exchange_type)
 

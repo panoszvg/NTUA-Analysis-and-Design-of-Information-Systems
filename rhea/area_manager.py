@@ -7,7 +7,7 @@ from rhea.broker import Broker
 from rhea.sender import Sender
 
 class AreaManager:
-    def __init__(self, area, hostname, port, send_interval, late_pct):
+    def __init__(self, area, hostname, port, username, password, send_interval, late_pct):
         # Validate manager attributes
         if area not in ["A", "B", "C", "D"]:
             raise ValueError(
@@ -33,10 +33,12 @@ class AreaManager:
         self.area = area
         self.hostname = hostname
         self.port = port
+        self.username = username
+        self.password = password
         self.send_interval = send_interval
         self.late_pct = late_pct
         self.broker = Broker(area)
-        self.broker.open_connection(self.hostname, self.port)
+        self.broker.open_connection(self.hostname, self.port, self.username, self.password)
         self.senders = []
         self.number = 0
 
@@ -78,11 +80,10 @@ class AreaManager:
         sleep_time = self.send_interval - sum(async_intervals)
         async_intervals.append(sleep_time)
 
-        # TODO: Consider whether different sensor types should go to different exchanges
         # Create channels for senders
         channels = []
         for s in self.senders:
-            s.open_connection(self.hostname, self.port)
+            s.open_connection(self.hostname, self.port, self.username, self.password)
             c = s.create_channel(exchange, "topic")
             channels.append(c)
 
@@ -124,7 +125,7 @@ class AreaManager:
         # Terminate senders
         for s in self.senders:
             s.close_connection()
-        
+
         # Terminate broker
         self.broker.close_connection()
 

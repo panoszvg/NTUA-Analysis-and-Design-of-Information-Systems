@@ -1,5 +1,3 @@
-import pika
-
 class Sender:
     def __init__(self, number, area, sensor_type):
         # Validate sender attributes
@@ -15,7 +13,7 @@ class Sender:
             raise ValueError(
                 "Please provide a valid sender sensor type. [temp, hum, ups, aqi]"
             )
-        
+
         self.number = number
         self.area = area
         self.sensor_type = sensor_type
@@ -25,7 +23,7 @@ class Sender:
     def get_type(self):
         return self.sensor_type
 
-    def open_connection(self, hostname, port):
+    def open_connection(self, hostname, port, username, password):
         """
         Open connection with the RabbitMQ server
         """
@@ -40,10 +38,12 @@ class Sender:
             )
 
         # Open connection
+        credentials = pika.PlainCredentials(username, password)
         self.connection = pika.BlockingConnection(
             pika.ConnectionParameters(
                 host=hostname,
-                port=port
+                port=port,
+                credentials=credentials
             )
         )
 
