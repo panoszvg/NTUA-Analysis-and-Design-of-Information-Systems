@@ -12,7 +12,8 @@ REQUIRES_PYTHON = ">=3.7.0"
 
 REQUIRED = [
     "pika>=1.2",
-    "pyspark>=3.2"
+    "pyspark>=3.2",
+    "numpy"
 ]
 
 repo_root = str(pathlib.Path(__file__).resolve().parent)
