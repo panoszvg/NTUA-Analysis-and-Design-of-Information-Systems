@@ -22,10 +22,10 @@ def start_channel():
     serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     serverSocket.bind((HOSTNAME, QUEUE_PORT))
     serverSocket.listen(1)
-    print(f'Waiting for client to connect to {QUEUE}.')
+    print(f'Waiting for client to connect to {QUEUE}.', flush=True)
     global conn
     conn, addr = serverSocket.accept()
-    print(f"Client with {addr} connected.")
+    print(f"Client with {addr} connected.", flush=True)
 
     # Consume queue
     channel.basic_consume(
@@ -52,8 +52,8 @@ if __name__ == '__main__':
 
     try:
         start_channel()
-    except ChannelClosed:
-        print("Exception ChannelClosed: Restarting channel")
+    except (BrokenPipeError, ChannelClosed):
+        print("Exception ChannelClosed: Restarting channel", flush=True)
         conn.close()
         start_channel()
     except KeyboardInterrupt:
