@@ -1,3 +1,5 @@
+import pika
+
 class Sender:
     def __init__(self, number, area, sensor_type):
         # Validate sender attributes
