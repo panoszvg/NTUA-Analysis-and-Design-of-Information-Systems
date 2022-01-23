@@ -6,6 +6,7 @@ import os
 
 from pika.exceptions import ChannelClosed
 
+serverSocket = None
 conn = None
 
 def callback(ch, method, properties, body):
@@ -19,8 +20,10 @@ def start_channel():
     channel = connection.channel()
 
     # Create server that listens for clients
-    serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    serverSocket.bind((HOSTNAME, QUEUE_PORT))
+    global serverSocket
+    if serverSocket == None:
+        serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        serverSocket.bind((HOSTNAME, QUEUE_PORT))
     serverSocket.listen(1)
     print(f'Waiting for client to connect to {QUEUE}.', flush=True)
     global conn

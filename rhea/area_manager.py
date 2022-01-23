@@ -65,7 +65,7 @@ class AreaManager:
         # Add sender to manager's senders
         self.senders.append(sender)
 
-    def activate_area(self, exchange):
+    def activate_area(self, exchange, area):
         # Define async intervals not all sender send at the same time
         powers = [2**(i+1) for i in range(len(self.senders))]
         if round(self.send_interval/sum(powers)) <= 2:
@@ -97,6 +97,7 @@ class AreaManager:
                     time_now = time.localtime()
                     message_dict = {
                         "sender_no": s.number,
+                        "area": area,
                         "value": self.create_value(s.get_type()),
                         "created_timestamp": out_of_order_time,
                         "event_timestamp": time_now
@@ -112,6 +113,7 @@ class AreaManager:
                     time_now = time.localtime()
                     message_dict = {
                         "sender_no": s.number,
+                        "area": area,
                         "value": self.create_value(s.get_type()),
                         "created_timestamp": time_now,
                         "event_timestamp": time_now
