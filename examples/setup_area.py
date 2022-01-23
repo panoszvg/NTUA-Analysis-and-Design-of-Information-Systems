@@ -49,5 +49,5 @@ if __name__ == '__main__':
         print(f"Successfully added sender {i} in area {AREA}", flush=True)
 
     # Activate area
-    print("About to activate area {AREA}.", flush=True)
+    print(f"About to activate area {AREA}.", flush=True)
     am.activate_area("all_sensors", AREA)
