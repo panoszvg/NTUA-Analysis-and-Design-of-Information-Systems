@@ -8,6 +8,8 @@ if __name__ == '__main__':
     AREA = os.environ.get("AREA")
     HOSTNAME = os.environ.get("BROKER_IP")
     PORT = int(os.environ.get("BROKER_PORT"))
+    USERNAME = os.environ.get("BROKER_USER")
+    PASSWORD = os.environ.get("BROKER_PASSW")
     SEND_INTERVAL = int(os.environ.get("SEND_INTERVAL"))
     LATE_PCT = float(os.environ.get("LATE_PCT"))
 
@@ -22,7 +24,7 @@ if __name__ == '__main__':
             "ontime.aqi", "late.aqi"]
 
     # Create an area manager - send_interval = 90s, late_pct = 1/30
-    am = AreaManager(AREA, HOSTNAME, PORT, SEND_INTERVAL, LATE_PCT)
+    am = AreaManager(AREA, HOSTNAME, PORT, USERNAME, PASSWORD, SEND_INTERVAL, LATE_PCT)
     print(f"Successfully created AreaManager in area {AREA}.")
 
     # Create exchange for the area
