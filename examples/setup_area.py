@@ -1,46 +1,51 @@
 import json
+import os
 import time
 
 from rhea import AreaManager, Sender
 
-AREA = "A"
-EXCHANGES = ["all_sensors"]
-QUEUES = ["ontime_temperature", "late_temperature",
-          "ontime_humidity", "late_humidity",
-          "ontime_ups_battery", "late_ups_battery",
-          "ontime_air_quality_index", "late_air_quality_index"]
-BINDINGS = ["ontime.temp", "late.temp",
-           "ontime.hum", "late.hum",
-           "ontime.ups", "late.ups",
-           "ontime.aqi", "late.aqi"]
-HOSTNAME = "<BROKER_IP>"
-PORT = "<BROKER_PORT>"
+if __name__ == '__main__':
+    AREA = os.environ.get("AREA")
+    HOSTNAME = os.environ.get("BROKER_IP")
+    PORT = int(os.environ.get("BROKER_PORT"))
+    SEND_INTERVAL = int(os.environ.get("SEND_INTERVAL"))
+    LATE_PCT = float(os.environ.get("LATE_PCT"))
 
-# Create an area manager - send_interval = 90s, late_pct = 1/30
-am = AreaManager(AREA, HOSTNAME, PORT, 90, 1/30)
-print(f"Successfully created AreaManager in area {AREA}.")
+    EXCHANGES = ["all_sensors"]
+    QUEUES = ["ontime_temperature", "late_temperature",
+            "ontime_humidity", "late_humidity",
+            "ontime_ups_battery", "late_ups_battery",
+            "ontime_air_quality_index", "late_air_quality_index"]
+    BINDINGS = ["ontime.temp", "late.temp",
+            "ontime.hum", "late.hum",
+            "ontime.ups", "late.ups",
+            "ontime.aqi", "late.aqi"]
 
-# Create exchange for the area
-for exch in EXCHANGES:
-    am.create_exchange(exch, "topic")
-    print(f"Successfully created Exchange {exch}.")
+    # Create an area manager - send_interval = 90s, late_pct = 1/30
+    am = AreaManager(AREA, HOSTNAME, PORT, SEND_INTERVAL, LATE_PCT)
+    print(f"Successfully created AreaManager in area {AREA}.")
 
-# Create queues for the area
-for queue in QUEUES:
-    am.create_queue(queue)
-    print(f"Successfully created Exchange {queue}.")
+    # Create exchange for the area
+    for exch in EXCHANGES:
+        am.create_exchange(exch, "topic")
+        print(f"Successfully created Exchange {exch}.")
 
-# Bind queues to exchange
-for queue, binding_key in zip(QUEUES, BINDINGS):
-    am.bind_queue_to_exchange("all_sensors", queue, binding_key)
-    print(f"Successfully binded {queue} to all_sensors ({binding_key}).")
+    # Create queues for the area
+    for queue in QUEUES:
+        am.create_queue(queue)
+        print(f"Successfully created Exchange {queue}.")
 
-# Add senders to area
-sensor_types = ["temp", "hum", "ups", "aqi"]
-for i, sensor_type in enumerate(sensor_types):
-    am.add_sender_to_area(sensor_type)
-    print(f"Successfully added sender {i} in area A")
+    # Bind queues to exchange
+    for queue, binding_key in zip(QUEUES, BINDINGS):
+        am.bind_queue_to_exchange("all_sensors", queue, binding_key)
+        print(f"Successfully binded {queue} to all_sensors ({binding_key}).")
 
-# Activate area
-print("About to activate area A.")
-am.activate_area("all_sensors")
+    # Add senders to area
+    sensor_types = ["temp", "hum", "ups", "aqi"]
+    for i, sensor_type in enumerate(sensor_types):
+        am.add_sender_to_area(sensor_type)
+        print(f"Successfully added sender {i} in area A")
+
+    # Activate area
+    print("About to activate area A.")
+    am.activate_area("all_sensors")
