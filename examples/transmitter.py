@@ -6,9 +6,12 @@ import os
 
 from pika.exceptions import ChannelClosed
 
+conn = None
+
 def callback(ch, method, properties, body):
     body = body.decode('utf8').replace("'", '"') + "\n"
     # Send to client
+    global conn
     conn.sendall(body.encode('utf8'))
 
 def start_channel():
@@ -20,7 +23,7 @@ def start_channel():
     serverSocket.bind((HOSTNAME, QUEUE_PORT))
     serverSocket.listen(1)
     print(f'Waiting for client to connect to {QUEUE}.')
-
+    global conn
     conn, addr = serverSocket.accept()
     print(f"Client with {addr} connected.")
 
