@@ -34,6 +34,8 @@ def start_channel():
 if __name__ == '__main__':
     HOSTNAME = os.environ.get("BROKER_IP")
     PORT = int(os.environ.get("BROKER_PORT"))
+    USERNAME = os.environ.get("BROKER_USER")
+    PASSWORD = os.environ.get("BROKER_PASSW")
 
     QUEUE = os.environ.get("QUEUE")
     QUEUE_PORT = int(os.environ.get("QUEUE_PORT"))
@@ -41,8 +43,9 @@ if __name__ == '__main__':
     conn = None
 
     # Create connection with message layer
+    creds = pika.PlainCredentials(USERNAME, PASSWORD)
     connection = pika.BlockingConnection(
-        pika.ConnectionParameters(host=HOSTNAME, port=PORT))
+        pika.ConnectionParameters(host=HOSTNAME, port=PORT, credentials=creds))
 
     try:
         start_channel()
