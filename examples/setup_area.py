@@ -50,4 +50,8 @@ if __name__ == '__main__':
 
     # Activate area
     print(f"About to activate area {AREA}.", flush=True)
-    am.activate_area("all_sensors", AREA)
+
+    try:
+        am.activate_area("all_sensors", AREA)
+    except:
+        am.terminate_area()

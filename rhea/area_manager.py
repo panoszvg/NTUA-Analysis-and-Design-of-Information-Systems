@@ -103,7 +103,7 @@ class AreaManager:
                         "event_timestamp": time_now
                     }
                     message = json.dumps(message_dict)
-                    s.send_message(c, exchange, f"late.{s.get_type()}", message)
+                    c = s.send_message(c, exchange, f"late.{s.get_type()}", message)
                     time.sleep(async_intervals[i])
                     i = i + 1
                 out_of_order_time = time.localtime()
@@ -119,7 +119,7 @@ class AreaManager:
                         "event_timestamp": time_now
                     }
                     message = json.dumps(message_dict)
-                    s.send_message(c, exchange, f"ontime.{s.get_type()}", message)
+                    c = s.send_message(c, exchange, f"ontime.{s.get_type()}", message)
                     time.sleep(async_intervals[i])
                     i = i + 1
 

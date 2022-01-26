@@ -1,5 +1,7 @@
 import pika
 
+from pika.exceptions import StreamLostError
+
 class Sender:
     def __init__(self, number, area, sensor_type):
         # Validate sender attributes
@@ -21,6 +23,7 @@ class Sender:
         self.sensor_type = sensor_type
         self.connection = None
         self.channels = []
+        self.params = None
 
     def get_type(self):
         return self.sensor_type
@@ -41,13 +44,12 @@ class Sender:
 
         # Open connection
         credentials = pika.PlainCredentials(username, password)
-        self.connection = pika.BlockingConnection(
-            pika.ConnectionParameters(
+        self.params = pika.ConnectionParameters(
                 host=hostname,
                 port=port,
                 credentials=credentials
             )
-        )
+        self.connection = pika.BlockingConnection(self.params)
 
     def close_connection(self):
         # Close all channels first
@@ -99,6 +101,31 @@ class Sender:
             )
         
         # Send message
-        channel.basic_publish(
-            exchange=exchange, routing_key=routing_key, body=message
-        )
+        try:
+            channel.basic_publish(
+                exchange=exchange, routing_key=routing_key, body=message
+            )
+        except StreamLostError:
+            print("A StreamLostError occurred reconnecting...", flush=True)
+            # Close bad connection
+            self.close_connection()
+            
+            # Open a new connection
+            self.open_connection(
+                self.params.host,
+                self.params.port,
+                self.params.credentials.username,
+                self.params.credentials.password
+            )
+            
+            # Create new channel
+            channel = self.connection.channel()
+            self.channels.append(channel)
+
+            print("Connection error resolved", flush=True)
+            channel.basic_publish(
+                exchange=exchange, routing_key=routing_key, body=message
+            )
+        finally:
+            return channel
+
