@@ -55,6 +55,9 @@ class Sender:
         # Close all channels first
         for channel in self.channels:
             channel.close()
+        
+        # Empty channels list
+        self.channels = []
 
         # Close connection
         self.connection.close()
@@ -101,31 +104,6 @@ class Sender:
             )
         
         # Send message
-        try:
-            channel.basic_publish(
-                exchange=exchange, routing_key=routing_key, body=message
-            )
-        except StreamLostError:
-            print("A StreamLostError occurred reconnecting...", flush=True)
-            # Close bad connection
-            self.close_connection()
-            
-            # Open a new connection
-            self.open_connection(
-                self.params.host,
-                self.params.port,
-                self.params.credentials.username,
-                self.params.credentials.password
-            )
-            
-            # Create new channel
-            channel = self.connection.channel()
-            self.channels.append(channel)
-
-            print("Connection error resolved", flush=True)
-            channel.basic_publish(
-                exchange=exchange, routing_key=routing_key, body=message
-            )
-        finally:
-            return channel
-
+        channel.basic_publish(
+            exchange=exchange, routing_key=routing_key, body=message
+        )

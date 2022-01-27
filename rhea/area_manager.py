@@ -67,25 +67,18 @@ class AreaManager:
 
     def activate_area(self, exchange, area):
         # Define async intervals not all sender send at the same time
-        powers = [2**(i+1) for i in range(len(self.senders))]
+        powers = [2**(i+1) for i in range(len(self.senders)-1)]
         if round(self.send_interval/sum(powers)) <= 2:
             raise ValueError(
                 """Please provide a bigger send_interval when creating the AreaManager or
                 use less sensors in the area"""
             )
         step = random.randrange(1, round(self.send_interval/sum(powers)))
-        async_intervals = [step*powers[i] for i in range(len(self.senders))]
+        async_intervals = [step*powers[i] for i in range(len(self.senders)-1)]
 
         #Calculate final sleep time
         sleep_time = self.send_interval - sum(async_intervals)
         async_intervals.append(sleep_time)
-
-        # Create channels for senders
-        channels = []
-        for s in self.senders:
-            s.open_connection(self.hostname, self.port, self.username, self.password)
-            c = s.create_channel(exchange, "topic")
-            channels.append(c)
 
         out_of_order_time = time.localtime()
         while True:
@@ -93,7 +86,7 @@ class AreaManager:
 
             if late:
                 i = 0
-                for s, c in zip(self.senders, channels):
+                for s in self.senders:
                     time_now = time.localtime()
                     message_dict = {
                         "sender_no": s.number,
@@ -103,13 +96,18 @@ class AreaManager:
                         "event_timestamp": time_now
                     }
                     message = json.dumps(message_dict)
-                    c = s.send_message(c, exchange, f"late.{s.get_type()}", message)
+
+                    s.open_connection(self.hostname, self.port, self.username, self.password)
+                    c = s.create_channel(exchange, "topic")
+                    s.send_message(c, exchange, f"late.{s.get_type()}", message)
+                    s.close_connection()
+
                     time.sleep(async_intervals[i])
                     i = i + 1
                 out_of_order_time = time.localtime()
             else:
                 i = 0
-                for s, c in zip(self.senders, channels):
+                for s in self.senders:
                     time_now = time.localtime()
                     message_dict = {
                         "sender_no": s.number,
@@ -119,7 +117,12 @@ class AreaManager:
                         "event_timestamp": time_now
                     }
                     message = json.dumps(message_dict)
-                    c = s.send_message(c, exchange, f"ontime.{s.get_type()}", message)
+                    
+                    s.open_connection(self.hostname, self.port, self.username, self.password)
+                    c = s.create_channel(exchange, "topic")
+                    s.send_message(c, exchange, f"ontime.{s.get_type()}", message)
+                    s.close_connection()
+
                     time.sleep(async_intervals[i])
                     i = i + 1
 
