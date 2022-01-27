@@ -126,6 +126,9 @@ class AreaManager:
                     time.sleep(async_intervals[i])
                     i = i + 1
 
+    def terminate_setup(self):
+        self.broker.close_connection()
+
     def terminate_area(self):
         # Terminate senders
         for s in self.senders:

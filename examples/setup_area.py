@@ -52,6 +52,7 @@ if __name__ == '__main__':
     print(f"About to activate area {AREA}.", flush=True)
 
     try:
+        am.terminate_setup()
         am.activate_area("all_sensors", AREA)
     except Exception as e:
         am.terminate_area()
