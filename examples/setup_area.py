@@ -54,5 +54,5 @@ if __name__ == '__main__':
     try:
         am.activate_area("all_sensors", AREA)
     except Exception as e:
-        print(f"Area {AREA} terminated: {e}")
         am.terminate_area()
+        print(f"Area {AREA} terminated: {e}", flush=True)
