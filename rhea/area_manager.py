@@ -68,17 +68,20 @@ class AreaManager:
     def activate_area(self, exchange, area):
         # Define async intervals not all sender send at the same time
         powers = [2**(i+1) for i in range(len(self.senders)-1)]
-        if round(self.send_interval/sum(powers)) <= 2:
-            raise ValueError(
-                """Please provide a bigger send_interval when creating the AreaManager or
-                use less sensors in the area"""
-            )
-        step = random.randrange(1, round(self.send_interval/sum(powers)))
-        async_intervals = [step*powers[i] for i in range(len(self.senders)-1)]
+        if (sum(powers) == 0):
+            async_intervals = [self.send_interval]
+        else:
+            if round(self.send_interval/sum(powers)) <= 2:
+                raise ValueError(
+                    """Please provide a bigger send_interval when creating the AreaManager or
+                    use less sensors in the area"""
+                )
+            step = random.randrange(1, round(self.send_interval/sum(powers)))
+            async_intervals = [step*powers[i] for i in range(len(self.senders)-1)]
 
-        #Calculate final sleep time
-        sleep_time = self.send_interval - sum(async_intervals)
-        async_intervals.append(sleep_time)
+            #Calculate final sleep time
+            sleep_time = self.send_interval - sum(async_intervals)
+            async_intervals.append(sleep_time)
 
         out_of_order_time = time.localtime()
         while True:
