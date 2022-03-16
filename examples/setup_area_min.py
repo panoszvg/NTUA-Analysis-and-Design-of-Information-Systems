@@ -14,8 +14,8 @@ if __name__ == '__main__':
     LATE_PCT = float(os.environ.get("LATE_PCT"))
 
     EXCHANGES = ["all_sensors"]
-    QUEUES = ["ontime_temperature", "late_temperature"]
-    BINDINGS = ["ontime.temp", "late.temp"]
+    QUEUES = ["ontime_temperature", "late_temperature", "ontime_humidity", "late_humidity"]
+    BINDINGS = ["ontime.temp", "late.temp", "ontime.hum", "late.hum"]
 
     # Create an area manager - send_interval = 90s, late_pct = 1/30
     am = AreaManager(AREA, HOSTNAME, PORT, USERNAME, PASSWORD, SEND_INTERVAL, LATE_PCT)
