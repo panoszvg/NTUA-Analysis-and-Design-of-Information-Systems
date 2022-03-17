@@ -37,7 +37,7 @@ if __name__ == '__main__':
         print(f"Successfully binded {queue} to all_sensors ({binding_key}).", flush=True)
 
     # Add senders to area
-    sensor_types = ["temp"]
+    sensor_types = ["temp", "hum"]
     for i, sensor_type in enumerate(sensor_types):
         am.add_sender_to_area(sensor_type)
         print(f"Successfully added sender {i} in area {AREA}", flush=True)
