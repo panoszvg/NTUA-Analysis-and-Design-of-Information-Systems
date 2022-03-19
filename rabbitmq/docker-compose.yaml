@@ -9,7 +9,7 @@ services:
       - '15672:15672'
     environment:
       - RABBITMQ_USERNAME=rheaAdmin
-      - RABBITMQ_PASSWORD=adminRhea
+      - RABBITMQ_PASSWORD=****Rhea
       - RABBITMQ_SECURE_PASSWORD=yes
     volumes:
       - '/home/user/deploy/rabbitmq/data:/bitnami/rabbitmq/mnesia'

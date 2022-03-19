@@ -30,8 +30,14 @@ def write_to_db(rdd, sensor_type, aggr_type):
                 StructField('value', DoubleType(), False),
         ])
         val = spark.createDataFrame(rdd, schema)
-        val.write.format("com.mongodb.spark.sql.DefaultSource"). \
+        print("-------------------------------------------")
+        print(val)
+        print("About to submit:", MONGO_URI)
+        val.write.format("mongo"). \
             mode("append").option("collection", f"{sensor_type}{aggr_type.capitalize()}").save()
+        print("Send to Mongo:", MONGO_URI)
+        print("-------------------------------------------")
+        print("")
 
 if __name__ == '__main__':
     BROKERS = json.loads(os.environ.get("BROKERS"))
@@ -47,10 +53,14 @@ if __name__ == '__main__':
         ('spark.master', SPARK_MASTER),
         ('spark.submit.deployMode', 'client'),
         ("spark.mongodb.output.uri", MONGO_URI),
-        ('spark.driver.host', DRIVER_HOST)
+        ('spark.driver.host', DRIVER_HOST),
+        ('spark.cores.max', 6),
+        ('spark.executor.memory', '768m'),
+        ('spark.app.name', f"ontime-{TYPE}")
     ])
 
     sc = SparkContext(conf=conf)
+    sc.setLogLevel("INFO")
     spark = SparkSession(sc)
     ssc = StreamingContext(sc, BATCH_DURATION)
 
@@ -96,10 +106,10 @@ if __name__ == '__main__':
     valuesAvg.foreachRDD(lambda rdd: write_to_db(rdd, TYPE, "avg"))
 
     # Log results
-    valuesMax.pprint()
-    valuesMin.pprint()
-    valuesSum.pprint()
-    valuesAvg.pprint()
+    #valuesMax.pprint()
+    #valuesMin.pprint()
+    #valuesSum.pprint()
+    #valuesAvg.pprint()
 
 ssc.start()
 ssc.awaitTermination()

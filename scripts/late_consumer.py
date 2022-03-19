@@ -33,8 +33,14 @@ def write_to_db(rdd, sensor_type):
                 StructField('created_timestamp', TimestampType(), False),
         ])
         val = spark.createDataFrame(rdd, schema)
+        print("-------------------------------------------")
+        print(val)
+        print("About to submit:", MONGO_URI)
         val.write.format("com.mongodb.spark.sql.DefaultSource"). \
             mode("append").option("collection", f"late{sensor_type.capitalize()}").save()
+        print("Send to Mongo:", MONGO_URI)
+        print("-------------------------------------------")
+        print("")
 
 if __name__ == '__main__':
     BROKERS = json.loads(os.environ.get("BROKERS"))
@@ -50,10 +56,14 @@ if __name__ == '__main__':
         ('spark.master', SPARK_MASTER),
         ('spark.submit.deployMode', 'client'),
         ("spark.mongodb.output.uri", MONGO_URI),
-        ('spark.driver.host', DRIVER_HOST)
+        ('spark.driver.host', DRIVER_HOST),
+        ('spark.cores.max', 6),
+        ('spark.executor.memory', '768m'),
+        ('spark.app.name', f"late-{TYPE}")
     ])
 
     sc = SparkContext(conf=conf)
+    sc.setLogLevel("INFO")
     spark = SparkSession(sc)
     ssc = StreamingContext(sc, BATCH_DURATION)
 

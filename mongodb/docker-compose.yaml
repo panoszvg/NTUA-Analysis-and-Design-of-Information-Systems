@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+  mongodb:
+    container_name: mongodb
+    image: docker.io/bitnami/mongodb:5.0
+    ports:
+      - '27017:27017'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=no
+      - MONGODB_ROOT_PASSWORD=root
+      - MONGODB_USERNAME=rheaAdmin
+      - MONGODB_PASSWORD=****Rhea
+      - MONGODB_DATABASE=rhea
+    volumes:
+      - /home/user/deploy/mongodb/data:/bitnami/mongodb

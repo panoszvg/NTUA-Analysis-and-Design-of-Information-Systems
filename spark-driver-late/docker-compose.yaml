@@ -11,7 +11,7 @@ services:
       - BATCH_DURATION=3600
       - SPARK_MASTER=spark://192.168.0.4:7077
       - DRIVER_HOST=192.168.0.5
-      - MONGO_URI=mongodb://rheaAdmin:adminRhea@192.168.0.6/rhea
+      - MONGO_URI=mongodb://rheaAdmin:****Rhea@192.168.0.6/rhea
     network_mode: 'host'
   spark-driver-late-hum:
     container_name: spark-driver-late-hum
@@ -23,5 +23,5 @@ services:
       - BATCH_DURATION=3600
       - SPARK_MASTER=spark://192.168.0.4:7077
       - DRIVER_HOST=192.168.0.5
-      - MONGO_URI=mongodb://rheaAdmin:adminRhea@192.168.0.6/rhea
+      - MONGO_URI=mongodb://rheaAdmin:****Rhea@192.168.0.6/rhea
     network_mode: 'host'

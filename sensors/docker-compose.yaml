@@ -9,7 +9,7 @@ services:
       - BROKER_IP=localhost
       - BROKER_PORT=5672
       - BROKER_USER=rheaAdmin
-      - BROKER_PASSW=adminRhea
+      - BROKER_PASSW=****Rhea
       - SEND_INTERVAL=900
       - LATE_PCT=0.0333
     network_mode: 'host'
