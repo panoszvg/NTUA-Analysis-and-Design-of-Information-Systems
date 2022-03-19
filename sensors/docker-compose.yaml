@@ -1,0 +1,15 @@
+version: '2'
+
+services:
+  sensors:
+    container_name: sensors
+    image: sensors
+    environment:
+      - AREA=A
+      - BROKER_IP=localhost
+      - BROKER_PORT=5672
+      - BROKER_USER=rheaAdmin
+      - BROKER_PASSW=adminRhea
+      - SEND_INTERVAL=900
+      - LATE_PCT=0.0333
+    network_mode: 'host'

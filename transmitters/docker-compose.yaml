@@ -1,0 +1,14 @@
+version: '2'
+
+services:
+  transmitters:
+    container_name: transmitters
+    image: transmitters
+    environment:
+      - BROKER_IP=192.168.0.3
+      - BROKER_PORT=5672
+      - BROKER_USER=rheaAdmin
+      - BROKER_PASSW=adminRhea
+      - QUEUES=["ontime_temperature", "late_temperature", "ontime_humidity", "late_humidity"]
+      - QUEUE_PORTS=["9000", "9001", "9002", "9003"]
+    network_mode: 'host'

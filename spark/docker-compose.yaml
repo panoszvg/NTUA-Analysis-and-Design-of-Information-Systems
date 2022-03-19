@@ -1,0 +1,30 @@
+version: '2'
+
+services:
+  spark:
+    container_name: spark
+    image: spark-custom
+    environment:
+      - SPARK_MODE=master
+      - SPARK_MASTER_WEBUI_PORT=8080
+      - SPARK_PUBLIC_DNS=192.168.0.4
+    ports:
+      - '8080:8080'
+      - '7077:7077'
+    network_mode: 'host'
+  spark-worker:
+    container_name: spark-worker
+    image: spark-custom
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://192.168.0.4:7077
+      - SPARK_WORKER_MEMORY=3G
+      - SPARK_WORKER_CORES=12
+      - SPARK_WORKER_PORT=5000
+      - SPARK_WORKER_WEBUI_PORT=8081
+      - SPARK_PUBLIC_DNS=192.168.0.4
+      - SPARK_LOCAL_HOSTNAME=192.168.0.4
+    ports:
+      - '5000:5000'
+      - '8081:8081'
+    network_mode: 'host'

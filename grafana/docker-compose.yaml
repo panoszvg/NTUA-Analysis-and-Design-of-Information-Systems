@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+  grafana:
+    container_name: grafana
+    image: grafana-mongodb
+    ports:
+      - '3000:3000'
+      - '3333:3333'
+    environment:
+      - 'GF_SECURITY_ADMIN_PASSWORD=RheaFun2021!'
+      - 'GF_PATHS_PLUGINS=/opt/bitnami/grafana/plugins'
+    volumes:
+      - /home/user/deploy/grafana/data:/opt/bitnami/grafana/data
+      - ./grafana.ini:/opt/bitnami/grafana/conf/grafana.ini
+    
